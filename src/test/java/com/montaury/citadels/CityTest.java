@@ -1,10 +1,12 @@
 package com.montaury.citadels;
 
 import com.montaury.citadels.district.Card;
+import com.montaury.citadels.player.HumanController;
+import com.montaury.citadels.player.Player;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,79 +24,54 @@ public class CityTest {
     }
 
     @Test
-    public void testScoreIsEquelZero() {
-        Possession possession = new Possession(5, hand);
-
+    public void test_score_plus_four_when_first_complete_city(){
         City city = new City(board);
+        Possession possession = new Possession(5,null);
 
-        assertEquals(0, city.score(possession));
-    }
-
-
-    @Test
-    public void scoreTotalWhen5ColorBuildings() {
-
-        Possession possession = new Possession(5, hand);
-
-        City city = new City(board);
-
-        city.buildDistrict(Card.MANOR_1);
-        city.buildDistrict(Card.WATCHTOWER_1);
-        city.buildDistrict(Card.TAVERN_1);
+        city.buildDistrict(Card.MANOR_5);
+        city.buildDistrict(Card.WATCHTOWER_2);
+        city.buildDistrict(Card.TAVERN_5);
         city.buildDistrict(Card.TEMPLE_1);
-        city.buildDistrict(Card.HAUNTED_CITY);
+        city.buildDistrict(Card.CHURCH_2);
+        city.buildDistrict(Card.CASTLE_2);
+        city.buildDistrict(Card.PRISON_2);
 
-
-        assertEquals(11, city.score(possession));
-
+        if (board.isFirst(city))
+            assertThat(city.score(possession)).isEqualTo(18);
     }
 
+    @Test
+    public void test_score_plus_two_when_other_complete_city(){
+        City city = new City(board);
+        Possession possession = new Possession(5,null);
+
+        city.buildDistrict(Card.MANOR_5);
+        city.buildDistrict(Card.WATCHTOWER_2);
+        city.buildDistrict(Card.TAVERN_5);
+        city.buildDistrict(Card.TEMPLE_1);
+        city.buildDistrict(Card.CHURCH_2);
+        city.buildDistrict(Card.CASTLE_2);
+        city.buildDistrict(Card.PRISON_2);
+
+        if (!board.isFirst(city) && city.isComplete())
+            assertThat(city.score(possession)).isEqualTo(16);
+    }
 
     @Test
-    public void scoreTotalWithDragonGate() {
-
-        Possession possession = new Possession(5, hand);
+    public void test_bonus_score_merveilles(){
         City city = new City(board);
+        Player player = new Player("Antoine", 21, city, new HumanController());
+        player.add(2);
+
+        CardPile pioche = new CardPile(Card.all().toList().shuffle());
+
+        player.add(pioche.draw(2));
+
         city.buildDistrict(Card.DRAGON_GATE);
-
-        assertEquals(8, city.score(possession));
-
-    }
-
-    @Test
-    public void scoreTotalWithUniversity() {
-
-        Possession possession = new Possession(5, hand);
-        City city = new City(board);
         city.buildDistrict(Card.UNIVERSITY);
-
-        assertEquals(8, city.score(possession));
-
-    }
-
-    @Test
-    public void scoreTotalWithThreasury() {
-
-        Possession possession = new Possession(5, hand);
-        City city = new City(board);
         city.buildDistrict(Card.TREASURY);
-
-        assertEquals(10, city.score(possession));
-
-    }
-
-    @Test
-    public void scoreTotalWithMapRoom() {
-
-        hand.add(Card.DRAGON_GATE);
-        Possession possession = new Possession(5, hand);
-        City city = new City(board);
         city.buildDistrict(Card.MAP_ROOM);
 
-
-        assertEquals(6, city.score(possession));
-
+        assertThat(player.score()).isEqualTo(34);
     }
-
-
 }
