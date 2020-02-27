@@ -53,7 +53,6 @@ public class CityTest {
 
         Possession possession = new Possession(5, null);
         city.buildDistrict(Card.DRAGON_GATE);
-
         int score = city.score(possession);
         assertThat(score).isEqualTo(8);
     }
@@ -63,7 +62,6 @@ public class CityTest {
 
         Possession possession = new Possession(5, null);
         city.buildDistrict(Card.UNIVERSITY);
-
         int score = city.score(possession);
         assertThat(score).isEqualTo(8);
 
@@ -75,7 +73,6 @@ public class CityTest {
         Possession possession = new Possession(5, null);
 
         city.buildDistrict(Card.TREASURY);
-
         int score = city.score(possession);
         assertThat(score).isEqualTo(10);
 
@@ -85,6 +82,15 @@ public class CityTest {
     public void score_Total_With_Map_Room_Should_Be_6() {;
 
         city.buildDistrict(Card.MAP_ROOM);
+        Possession possession = new Possession(0, HashSet.of(Card.MANOR_1,Card.MANOR_2, Card.MANOR_3));
+        int score = city.score(possession);
+        assertThat(score).isEqualTo(8);
+    }
+
+    @Test
+    public void score_Total_Haunted_City_Room_Should_Be_() {;
+
+        city.buildDistrict(Card.MAP_ROOM);
 
 
 
@@ -92,6 +98,8 @@ public class CityTest {
         int score = city.score(possession);
         assertThat(score).isEqualTo(8);
     }
+
+
 
     @Test
     public void test_score_plus_four_when_first_complete_city(){
@@ -127,7 +135,7 @@ public class CityTest {
             assertThat(city.score(possession)).isEqualTo(16);
     }
 
-    @Test
+   /* @Test
     public void test_bonus_score_merveilles(){
         City city = new City(board);
         Player player = new Player("Michel", 99, city, new HumanController());
@@ -143,6 +151,23 @@ public class CityTest {
         city.buildDistrict(Card.MAP_ROOM);
 
         assertThat(player.score()).isEqualTo(34);
+    }*/
+
+   @Test
+    public void test_bonus_score_merveilles(){
+       city.buildDistrict(Card.DRAGON_GATE);//8
+       city.buildDistrict(Card.UNIVERSITY);//8
+       city.buildDistrict(Card.TREASURY);//5 + bonus 7
+       city.buildDistrict(Card.MAP_ROOM);//5 + bonus + 3
+
+
+
+       Possession possession = new Possession(7, HashSet.of(Card.MANOR_1,Card.MANOR_2, Card.MANOR_3));
+
+       int score = city.score(possession);
+       assertThat(score).isEqualTo(36);
     }
+
+
 }
 
