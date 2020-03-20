@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'EnchantedLand';
+    src: url('/com/montaury/citadels/interfaceAssets/fonts/Enchanted_Land.otf');
+}
+
+
+
+
+
+.root {
+    -fx-background-image: url(com/montaury/citadels/interfaceAssets/backgrounds/oldPaper.jpg);
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+}
+
+.title{
+    -fx-font-size: 90px;
+    -fx-font-family: 'Enchanted Land' ;
+}
+
+.button{
+    -fx-background-image: url(com/montaury/citadels/interfaceAssets/buttons/buttonLong_beige.png);
+    -fx-background-color: transparent;
+    -fx-pref-height: 49;
+}
+
+.button-selected{
+    -fx-background-image: url(com/montaury/citadels/interfaceAssets/buttons/buttonLong_beige_pressed.png);
+    -fx-background-color: transparent;
+    -fx-pref-height: 45;
+}
