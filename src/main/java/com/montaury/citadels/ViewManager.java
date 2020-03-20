@@ -123,6 +123,21 @@ public class ViewManager {
     }
 
 
+    private void loadMainGame(Player player){
+        mainPane = new Pane();
+        mainScene = new Scene(mainPane, ResolutionFenetre.jeu.getWidth(), ResolutionFenetre.jeu.getHeight());
+        mainScene.getStylesheets().add("mainGame.css");
+
+        mainPane.getChildren().add(outils.newButton("Nouvelle partie",206, 305));
+        mainPane.getChildren().add(outils.newButton("Nouvelle partie",500, 800));
+        mainPane.getChildren().add(outils.newButton("Quitter",270, 305));
+        outils.createLabel("Citadelles",28, 280, mainPane, "title");
+
+        mainStage = new Stage();
+        mainStage.setResizable(true);
+        mainStage.setScene(mainScene);
+    }
+
     public Stage getMainStage(){
         return mainStage;
     }
