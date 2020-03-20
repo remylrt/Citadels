@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group 'com.montaury.citadels'
@@ -15,4 +16,20 @@ dependencies {
     implementation 'io.vavr:vavr:0.9.2'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation("org.assertj:assertj-core:3.11.1")
+}
+
+javafx {
+    version = '12'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    configuration = 'compileOnly'
+}
+
+sourceSets.main {
+    java {
+        srcDir 'src/main/java' //assume that your source codes are inside this path
+    }
+    resources {
+        srcDirs = ['src/main/java', 'src/main/resources']
+        exclude "**/*.java"
+    }
 }
