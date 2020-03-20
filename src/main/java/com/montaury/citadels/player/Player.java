@@ -1,6 +1,7 @@
 package com.montaury.citadels.player;
 
 import com.montaury.citadels.City;
+import com.montaury.citadels.Citadels;
 import com.montaury.citadels.Possession;
 import com.montaury.citadels.district.Card;
 import io.vavr.collection.HashSet;
@@ -38,11 +39,11 @@ public class Player {
         return city;
     }
 
-    public void add(int goldCoins) {
+    public void addCoins(int goldCoins) {
         gold+= (goldCoins);
     }
 
-    public void add(Set<Card> cards) {
+    public void addCards(Set<Card> cards) {
         this.cards = this.cards.addAll(cards);
     }
 
@@ -66,13 +67,18 @@ public class Player {
         return cards.filter(this::canBuildDistrict);
     }
 
-    public void buildDistrict(Card card) {
+    public void buildDistrict(Card card,boolean isAlchemist) {
         if (!canBuildDistrict(card)) {
             return;
         }
         cards = cards.remove(card);
         city.buildDistrict(card);
         gold -= (card.district().cost());
+
+        if(isAlchemist){
+            gold+= (card.district().cost());
+        }
+
     }
 
     public int score() {
@@ -95,7 +101,7 @@ public class Player {
     }
 
     public void pay(int cost) {
-        gold -= ((cost));
+        gold -= (cost);
     }
 
 }
