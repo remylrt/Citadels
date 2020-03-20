@@ -23,6 +23,9 @@ public class ViewManager {
     private Scene mainScene;
     private Stage mainStage;
     private BoiteAOutils outils = new BoiteAOutils();
+    private Player player;
+    private Board board;
+
 
     public ViewManager(){
 
@@ -111,7 +114,15 @@ public class ViewManager {
         buttonJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
+                if (!textFieldPseudo.getText().isEmpty() && !textFieldPseudo.getText().isBlank() && !textFieldAge.getText().isEmpty() && !textFieldAge.getText().isBlank()){
+                    player = new Player(textFieldPseudo.getText().toString(), Integer.parseInt(textFieldAge.getText()), new City(board), new HumanController());
+                    mainStage.close();
+                    loadMainGame(player);
+                    mainStage.show();
+                    mainStage.show();
+                }else {
+                    System.out.println("error : champs de saisie vides");
+                }
             }
         });
 
@@ -128,10 +139,7 @@ public class ViewManager {
         mainScene = new Scene(mainPane, ResolutionFenetre.jeu.getWidth(), ResolutionFenetre.jeu.getHeight());
         mainScene.getStylesheets().add("mainGame.css");
 
-        mainPane.getChildren().add(outils.newButton("Nouvelle partie",206, 305));
-        mainPane.getChildren().add(outils.newButton("Nouvelle partie",500, 800));
-        mainPane.getChildren().add(outils.newButton("Quitter",270, 305));
-        outils.createLabel("Citadelles",28, 280, mainPane, "title");
+        outils.createLabel("En cours de dev",28, 280, mainPane, "title");
 
         mainStage = new Stage();
         mainStage.setResizable(true);
