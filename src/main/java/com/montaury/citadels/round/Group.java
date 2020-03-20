@@ -41,7 +41,7 @@ public class Group {
         return stolenBy;
     }
 
-    private final Player player;
+    public final Player player;
     public final Character character;
     private boolean murdered;
     private Option<Player> stolenBy = Option.none();

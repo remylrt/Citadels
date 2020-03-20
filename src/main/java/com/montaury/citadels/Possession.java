@@ -12,11 +12,11 @@ public class Possession {
         this.hand = hand;
     }
 
-    public int goldCoins() {
+    public int getGoldCoins() {
         return gold;
     }
 
-    public int cardsInHandCount() {
+    public int getCardsInHandCount() {
         return hand.size();
     }
 }

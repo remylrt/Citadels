@@ -66,13 +66,16 @@ public class Player {
         return cards.filter(this::canBuildDistrict);
     }
 
-    public void buildDistrict(Card card) {
+    public void buildDistrict(Card card,boolean isAlchemist) {
         if (!canBuildDistrict(card)) {
             return;
         }
         cards = cards.remove(card);
         city.buildDistrict(card);
         gold -= (card.district().cost());
+        if(isAlchemist){
+            gold+= (card.district().cost());
+        }
     }
 
     public int score() {
@@ -95,7 +98,7 @@ public class Player {
     }
 
     public void pay(int cost) {
-        gold -= ((cost));
+        gold -= (cost);
     }
 
 }

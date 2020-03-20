@@ -9,7 +9,11 @@ public enum Character {
     MAGICIAN(3, "Magician"),
     KING(4, "King", DistrictType.NOBLE),
     BISHOP(5, "Bishop", DistrictType.RELIGIOUS),
+
+    //Le choix entre :
     MERCHANT(6, "Merchant", DistrictType.TRADE),
+    ALCHEMIST(6,"Alchemist",DistrictType.TRADE),
+
     ARCHITECT(7, "Architect"),
     WARLORD(8, "Warlord", DistrictType.MILITARY);
 

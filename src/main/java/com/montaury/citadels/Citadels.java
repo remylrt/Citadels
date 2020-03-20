@@ -12,6 +12,7 @@ import com.montaury.citadels.player.Player;
 import com.montaury.citadels.round.GameRoundAssociations;
 import com.montaury.citadels.round.Group;
 import com.montaury.citadels.round.action.DestroyDistrictAction;
+import com.montaury.citadels.round.action.DestroyDistrictAction;
 import io.vavr.Tuple;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.List;
@@ -28,6 +29,8 @@ public class Citadels {
         String playerName = scanner.next();
         System.out.println("Quel est votre age ? ");
         int playerAge = scanner.nextInt();
+        System.out.println("Merchant(true) or Alchemist(false) ?");
+        boolean withMerchant = scanner.nextBoolean();
         Board board = new Board();
         Player p = new Player(playerName, playerAge, new City(board), new HumanController());
         p.human = true;
@@ -35,13 +38,12 @@ public class Citadels {
         System.out.println("Saisir le nombre de joueurs total (entre 2 et 8): ");
         int nbP;
         do {
-            nbP = scanner.nextInt();
+           nbP = scanner.nextInt();
         } while (nbP < 2 || nbP > 8);
-        for (int joueurs = 0; joueurs < nbP; joueurs += 1) {
-            Player player = new Player("Computer " + joueurs, 35, new City(board), new ComputerController());
+        for (int nBjoueurs = 0; nBjoueurs < nbP - 1; nBjoueurs ++) {
+            Player player = new Player("Computer " + nBjoueurs, 35, new City(board), new ComputerController());
             player.computer = true;
-            players = players.append(player
-            );
+            players = players.append(player);
         }
         CardPile pioche = new CardPile(Card.all().toList().shuffle());
         players.forEach(player -> {
@@ -56,22 +58,22 @@ public class Citadels {
             Collections.rotate(list, -players.indexOf(crown));
             List<Player> playersInOrder = List.ofAll(list);
             RandomCharacterSelector randomCharacterSelector = new RandomCharacterSelector();
-            List<Character> availableCharacters = List.of(Character.ASSASSIN, Character.THIEF, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD);
+            List<Character> availableCharacters = List.of(Character.ASSASSIN, Character.THIEF, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
 
             List<Character> availableCharacters1 = availableCharacters;
             List<Character> discardedCharacters = List.empty();
-            for (int i = 0; i < 1; i++) {
+
                 Character discardedCharacter = randomCharacterSelector.among(availableCharacters1);
                 discardedCharacters = discardedCharacters.append(discardedCharacter);
                 availableCharacters1 = availableCharacters1.remove(discardedCharacter);
-            }
+
             Character faceDownDiscardedCharacter = discardedCharacters.head();
             availableCharacters = availableCharacters.remove(faceDownDiscardedCharacter);
 
             List<Character> availableCharacters11 = availableCharacters.remove(Character.KING);
             List<Character> discardedCharacters1 = List.empty();
             for (int i = 0; i < 7 - playersInOrder.size() - 1; i++) {
-                Character discardedCharacter = randomCharacterSelector.among(availableCharacters11);
+                discardedCharacter = randomCharacterSelector.among(availableCharacters11);
                 discardedCharacters1 = discardedCharacters1.append(discardedCharacter);
                 availableCharacters11 = availableCharacters11.remove(discardedCharacter);
             }
@@ -89,12 +91,23 @@ public class Citadels {
             List<Group> associations = associations1;
             GameRoundAssociations groups = new GameRoundAssociations(associations);
 
-            for (int iii = 0; iii < 8; iii++) {
-                for (int ii = 0; ii < associations.size(); ii++) {
-                    if (iii + 1 == associations.get(ii).character.number()) {
-                        if (associations.get(ii).isMurdered()) {}else{
-                            Group group = associations.get(ii);
-                            associations.get(ii).thief().peek(thief -> thief.steal(group.player()));
+            for (int characterQuiJoue = 0; characterQuiJoue < 8; characterQuiJoue++) {
+                for (int NumeroJoueurAssociation = 0; NumeroJoueurAssociation < associations.size(); NumeroJoueurAssociation++) {
+                    //Debogage avant le if
+                    System.out.println("Avant le if");
+                    System.out.println("Character qui joue = " + characterQuiJoue);
+                    System.out.println("Joueur = " + NumeroJoueurAssociation);
+                    System.out.println("Nom character : " + associations.get(NumeroJoueurAssociation).character.name() + " " +" Numero : " + associations.get(NumeroJoueurAssociation).character.number());
+                    System.out.println("Nom du joueur :" + associations.get(NumeroJoueurAssociation).player.name());
+                    if (characterQuiJoue + 1 == associations.get(NumeroJoueurAssociation).character.number()) {
+                        //Debogage après le if
+                        System.out.println("Character qui joue = " + characterQuiJoue);
+                        System.out.println("Joueur = " + NumeroJoueurAssociation);
+                        System.out.println("Nom character :" + associations.get(NumeroJoueurAssociation).character.name() + " " +"Numero : " + associations.get(NumeroJoueurAssociation).character.number());
+                        if (associations.get(NumeroJoueurAssociation).isMurdered()) {
+                        }else{
+                            Group group = associations.get(NumeroJoueurAssociation);
+                            associations.get(NumeroJoueurAssociation).thief().peek(thief -> thief.steal(group.player()));
                             Set<String> baseActions = HashSet.of("Draw 2 cards and keep 1", "Receive 2 coins");
                             List<District> districts = group.player().city().districts();
                             Set<String> availableActions = baseActions;
@@ -225,7 +238,13 @@ public class Citadels {
                                 if (actionType1 == "End round")
                                     {} else if (actionType1 == "Build district") {
                                     Card card = group.player().controller.selectAmong(group.player().buildableDistrictsInHand());
-                                    group.player().buildDistrict(card);
+
+                                    if (group.character == Character.ALCHEMIST){
+                                        group.player().buildDistrict(card,true);
+                                    }
+                                    else{
+                                        group.player().buildDistrict(card,false);
+                                    }
                                     }
                                     else if (actionType1 == "Discard card for 2 coins") {
                                     Player player = group.player();
@@ -271,7 +290,7 @@ public class Citadels {
                                     else if (group.character == Character.KING) {
                                         type = DistrictType.NOBLE;
                                     }
-                                    else if (group.character == Character.MERCHANT) {
+                                    else if (group.character == Character.MERCHANT || group.character == Character.ALCHEMIST) {
                                         type = DistrictType.TRADE;
                                     }
                                     if (type != null) {
@@ -288,10 +307,8 @@ public class Citadels {
                                 else if (actionType1 == "Destroy district") {
                                     // flemme...
                                 }
-                                    else if (actionType1 == "Rob") {
-                                    Character character = group.player().controller.selectAmong(List.of(Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD)
-                                            .removeAll(groups.associations.find(Group::isMurdered).map(Group::character)));
-                                    groups.associationToCharacter(character).peek(association -> association.stolenBy(group.player()));
+                                else if (actionType1 == "Rob") { Character character = group.player().controller.selectAmong(List.of(Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD).removeAll(groups.associations.find(Group::isMurdered).map(Group::character)));
+                                groups.associationToCharacter(character).peek(association -> association.stolenBy(group.player()));
                                 }
                                 actionExecuted(group, actionType1, associations);
                                 actionType11 = actionType1;
