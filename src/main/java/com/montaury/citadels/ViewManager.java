@@ -84,7 +84,7 @@ public class ViewManager {
         grid.setLayoutY(100);
 
 
-        CitadelsLabel labelPseudo = outils.createAndReturnLabel("Citadelles",0, 0, mainPane, "inputText");
+        CitadelsLabel labelPseudo = outils.createAndReturnLabel("Pseudo",0, 0, mainPane, "inputText");
         grid.setConstraints(labelPseudo, 0, 0);
 
         TextField textFieldPseudo = new TextField();
@@ -96,7 +96,7 @@ public class ViewManager {
         TextField textFieldAge = new TextField();
         grid.setConstraints(textFieldAge, 1, 1);
 
-        CitadelsLabel labelNbPlayer = outils.createAndReturnLabel("Nombre de joueur (2 à 8 joueurs)",0, 0, mainPane, "inputText");
+        CitadelsLabel labelNbPlayer = outils.createAndReturnLabel("Nombre de joueurs (2 à 8 joueurs)",0, 0, mainPane, "inputText");
         grid.setConstraints(labelNbPlayer, 0, 2);
 
         Slider sliderNbJoueur = new Slider(2, 8, 1);
