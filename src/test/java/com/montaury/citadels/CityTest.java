@@ -134,20 +134,6 @@ public class CityTest {
             assertThat(city.score(possession)).isEqualTo(16);
     }
 
-   /* @Test
-    public void test_bonus_score_merveilles(){
-        City city = new City(board);
-        Player player = new Player("Michel", 99, city, new HumanController());
-        player.add(2);
-        CardPile pioche = new CardPile(Card.all().toList().shuffle());
-        player.add(pioche.draw(2));
-        city.buildDistrict(Card.DRAGON_GATE);
-        city.buildDistrict(Card.UNIVERSITY);
-        city.buildDistrict(Card.TREASURY);
-        city.buildDistrict(Card.MAP_ROOM);
-        assertThat(player.score()).isEqualTo(34);
-    }*/
-
     @Test
     public void test_bonus_score_merveilles(){
         city.buildDistrict(Card.DRAGON_GATE);//8

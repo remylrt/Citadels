@@ -23,23 +23,26 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class Citadels {
+    public static boolean withBailli;
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Hello! Quel est votre nom ? ");
         String playerName = scanner.next();
         System.out.println("Quel est votre age ? ");
         int playerAge = scanner.nextInt();
-        System.out.println("Merchant(true) or Alchemist(false) ?");
-        boolean withMerchant = scanner.nextBoolean();
+        System.out.println("Alchemist(true) or Merchant(false) ?");
+        boolean withAlchemist = scanner.nextBoolean();
+        System.out.println("Bailli(true) or Thief(false) ?");
+        withBailli = scanner.nextBoolean();
         Board board = new Board();
         Player p = new Player(playerName, playerAge, new City(board), new HumanController());
         p.human = true;
         List<Player> players = List.of(p);
-        System.out.println("Saisir le nombre de joueurs total (entre 2 et 8): ");
+        System.out.println("Saisir le nombre de joueurs total (entre 2 et 7): ");
         int nbP;
         do {
            nbP = scanner.nextInt();
-        } while (nbP < 2 || nbP > 8);
+        } while (nbP < 2 || nbP > 7);
         for (int nBjoueurs = 0; nBjoueurs < nbP - 1; nBjoueurs ++) {
             Player player = new Player("Computer " + nBjoueurs, 35, new City(board), new ComputerController());
             player.computer = true;
@@ -47,8 +50,8 @@ public class Citadels {
         }
         CardPile pioche = new CardPile(Card.all().toList().shuffle());
         players.forEach(player -> {
-            player.add(2);
-            player.add(pioche.draw(2));
+            player.addCoins(2);
+            player.addCards(pioche.draw(2));
         });
         Player crown = players.maxBy(Player::age).get();
 
@@ -58,7 +61,21 @@ public class Citadels {
             Collections.rotate(list, -players.indexOf(crown));
             List<Player> playersInOrder = List.ofAll(list);
             RandomCharacterSelector randomCharacterSelector = new RandomCharacterSelector();
-            List<Character> availableCharacters = List.of(Character.ASSASSIN, Character.THIEF, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
+
+            List<Character> availableCharacters;
+            if(withAlchemist){
+                if (withBailli){
+                    availableCharacters = List.of(Character.ASSASSIN, Character.BAILLI, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.ALCHEMIST, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
+                }else{
+                    availableCharacters = List.of(Character.ASSASSIN, Character.THIEF, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.ALCHEMIST, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
+                }
+            }else{
+                if(withBailli) {
+                    availableCharacters = List.of(Character.ASSASSIN, Character.BAILLI, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
+                }else{
+                    availableCharacters = List.of(Character.ASSASSIN, Character.THIEF, Character.MAGICIAN, Character.KING, Character.BISHOP, Character.MERCHANT, Character.ARCHITECT, Character.WARLORD, Character.ALCHEMIST);
+                }
+            }
 
             List<Character> availableCharacters1 = availableCharacters;
             List<Character> discardedCharacters = List.empty();
@@ -92,11 +109,10 @@ public class Citadels {
             GameRoundAssociations groups = new GameRoundAssociations(associations);
 
             for (int characterQuiJoue = 0; characterQuiJoue < 8; characterQuiJoue++) {
-                for (int NumeroJoueurAssociation = 0; NumeroJoueurAssociation < associations.size(); NumeroJoueurAssociation++) {
+                for (int NumeroJoueurAssociation = 0; NumeroJoueurAssociation < associations.size(); NumeroJoueurAssociation++) { //NuméroJoueurAssociation = Place du joueur dans la liste "associations"
                     //Debogage avant le if
-                    System.out.println("Avant le if");
                     System.out.println("Character qui joue = " + characterQuiJoue);
-                    System.out.println("Joueur = " + NumeroJoueurAssociation);
+                    System.out.println("Place du joueur dans la liste = " + NumeroJoueurAssociation);
                     System.out.println("Nom character : " + associations.get(NumeroJoueurAssociation).character.name() + " " +" Numero : " + associations.get(NumeroJoueurAssociation).character.number());
                     System.out.println("Nom du joueur :" + associations.get(NumeroJoueurAssociation).player.name());
                     if (characterQuiJoue + 1 == associations.get(NumeroJoueurAssociation).character.number()) {
@@ -140,10 +156,10 @@ public class Citadels {
                                     pioche.discard(cardsDrawn.remove(keptCard).toList());
                                     cardsDrawn = HashSet.of(keptCard);
                                 }
-                                group.player().add(cardsDrawn);
+                                group.player().addCards(cardsDrawn);
                             }
                             else if (actionType == "Receive 2 coins") {
-                                group.player().add(2);
+                                group.player().addCoins(2);
                             }
                             else if (actionType == "Draw 3 cards and keep 1") {
                                 Set<Card> cardsDrawn = pioche.draw(3);
@@ -152,7 +168,7 @@ public class Citadels {
                                     pioche.discard(cardsDrawn.remove(keptCard).toList());
                                     cardsDrawn = HashSet.of(keptCard);
                                 }
-                                group.player().add(cardsDrawn);
+                                group.player().addCards(cardsDrawn);
                             }
                             actionExecuted(group, actionType, associations);
 
@@ -182,8 +198,14 @@ public class Citadels {
                             else if (group.character == Character.WARLORD) {
                                 powers = List.of("Receive income", "Destroy district");
                             }
+                            else if (group.character == Character.ALCHEMIST) {
+                                powers = List.of("Receive income");
+                            }
+                            else if (group.character == Character.BAILLI) {
+                                powers = List.of("Tu as déjà reçu des pieces");
+                            }
                             else {
-                                System.out.println("Uh oh");
+                                System.out.println("Oups, on dirai que un personnage n'a pas pu jouer");
                             }
                             List<String>  extraActions = List.empty();
                             for (District d : group.player().city().districts()) {
@@ -251,16 +273,16 @@ public class Citadels {
                                     Card card = player.controller.selectAmong(player.cards());
                                     player.cards = player.cards().remove(card);
                                     pioche.discard(card);
-                                    player.add(2);
+                                    player.addCoins(2);
                                     }
                                     else if (actionType1 == "Draw 3 cards for 2 coins") {
-                                    group.player().add(pioche.draw(3));
+                                    group.player().addCards(pioche.draw(3));
                                     group.player().pay(2);
                                     }
                                     else if (actionType1 == "Exchange cards with pile") {
                                     Set<Card> cardsToSwap = group.player().controller.selectManyAmong(group.player().cards());
                                     group.player().cards = group.player().cards().removeAll(cardsToSwap);
-                                    group.player().add(pioche.swapWith(cardsToSwap.toList()));
+                                    group.player().addCards(pioche.swapWith(cardsToSwap.toList()));
                                     }
                                     else if (actionType1 == "Exchange cards with other player") {
                                     Player playerToSwapWith = group.player().controller.selectPlayerAmong(groups.associations.map(Group::player).remove(group.player()));
@@ -271,13 +293,13 @@ public class Citadels {
                                     groups.associationToCharacter(characterToMurder).peek(Group::murder);
                                     }
                                     else if (actionType1 == "Pick 2 cards") {
-                                    group.player().add(pioche.draw(2));
+                                    group.player().addCards(pioche.draw(2));
                                     }
                                     else if (actionType1 == "Receive 2 coins") {
-                                    group.player().add(2);
+                                    group.player().addCoins(2);
                                     }
                                     else if (actionType1 == "Receive 1 gold") {
-                                    group.player().add(1);
+                                    group.player().addCoins(1);
                                     }
                                     else if (actionType1 == "Receive income") {
                                     DistrictType type = null;
@@ -296,10 +318,10 @@ public class Citadels {
                                     if (type != null) {
                                         for (District d : group.player().city().districts()) {
                                             if (d.districtType() == type) {
-                                                group.player().add(1);
+                                                group.player().addCoins(1);
                                             }
                                             if (d == District.MAGIC_SCHOOL) {
-                                                group.player().add(1);
+                                                group.player().addCoins(1);
                                             }
                                         }
                                     }

@@ -5,7 +5,11 @@ import io.vavr.control.Option;
 
 public enum Character {
     ASSASSIN(1, "Assassin"),
+
+    //Choix entre :
     THIEF(2, "Thief"),
+    BAILLI(2,"Bailli"),
+
     MAGICIAN(3, "Magician"),
     KING(4, "King", DistrictType.NOBLE),
     BISHOP(5, "Bishop", DistrictType.RELIGIOUS),
