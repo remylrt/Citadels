@@ -14,13 +14,13 @@ public class ViewManager {
     public ViewManager(){
 
         loadAccueil();
-        //createMainGame();
     }
 
     private void loadAccueil(){
         mainPane = new Pane();
         mainScene = new Scene(mainPane, 500, 500);
         mainStage = new Stage();
+
         mainStage.setResizable(false);
         mainStage.setScene(mainScene);
     }
